@@ -8,7 +8,7 @@ using MinimalApi.Infraestrutura.Db;
 
 #nullable disable
 
-namespace minimal_api.Migrations
+namespace MinimalApi.Migrations
 {
     [DbContext(typeof(DbContexto))]
     [Migration("20250806144355_SeedAdministrador")]
@@ -24,7 +24,7 @@ namespace minimal_api.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("minimal_api.Dominio.Entidades.Administrador", b =>
+            modelBuilder.Entity("MinimalApi.Dominio.Entidades.Administrador", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
