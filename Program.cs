@@ -45,6 +45,8 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 #endregion
 
 #region Veiculos
+const string VeiculosTag = "Veiculos";
+
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
     var veiculo = new Veiculo
@@ -56,7 +58,7 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veic
 
     veiculoServico.Incluir(veiculo);
     return Results.Created($"/veiculo/{veiculo.Id}", veiculo);
-}).WithTags("Veiculos").WithDescription("Incluir um novo veículo");
+}).WithTags(VeiculosTag).WithDescription("Incluir um novo veículo");
 
 app.MapGet("/veiculos", (
     [FromQuery] int? pagina,
@@ -66,14 +68,14 @@ app.MapGet("/veiculos", (
 {
     var veiculos = veiculoServico.Todos(pagina, nome, marca);
     return Results.Ok(veiculos);
-}).WithTags("Veiculos").WithDescription("Listar todos os veículos");
+}).WithTags(VeiculosTag).WithDescription("Listar todos os veículos");
 
 app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico) =>
 {
     var veiculo = veiculoServico.BuscarPorId(id);
 
     return veiculo != null ? Results.Ok(veiculo) : Results.NotFound();
-}).WithTags("Veiculos").WithDescription("Buscar veículo por ID");
+}).WithTags(VeiculosTag).WithDescription("Buscar veículo por ID");
 
 app.MapPut("/veiculos/{id}", ([FromRoute] int id, [FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
@@ -88,7 +90,7 @@ app.MapPut("/veiculos/{id}", ([FromRoute] int id, [FromBody] VeiculoDTO veiculoD
 
     veiculoServico.Atualizar(veiculo);
     return Results.Ok(veiculo);
-}).WithTags("Veiculos").WithDescription("Atualizar veículo por ID");
+}).WithTags(VeiculosTag).WithDescription("Atualizar veículo por ID");
 
 app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico) =>
 {
@@ -98,8 +100,9 @@ app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServ
         return Results.NotFound();
 
     veiculoServico.Apagar(veiculo);
+    
     return Results.NoContent();
-}).WithTags("Veiculos").WithDescription("Apagar veículo por ID");
+}).WithTags(VeiculosTag).WithDescription("Apagar veículo por ID");
 
 #endregion
 
