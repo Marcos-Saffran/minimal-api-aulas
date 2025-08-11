@@ -59,7 +59,7 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veic
 });
 
 app.MapGet("/veiculos", (
-    [FromQuery] int pagina,
+    [FromQuery] int? pagina,
     [FromQuery] string? nome,
     [FromQuery] string? marca,
     IVeiculoServico veiculoServico) =>

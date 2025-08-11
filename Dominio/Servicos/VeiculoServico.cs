@@ -19,7 +19,7 @@ public class VeiculoServico : IVeiculoServico
         return _contexto.Veiculos.Find(id);
     }
 
-    public List<Veiculo> Todos(int pagina, string? nome = null, string? marca = null)
+    public List<Veiculo> Todos(int? pagina = 1, string? nome = null, string? marca = null)
     {
         var query = _contexto.Veiculos.AsQueryable();
 
@@ -47,7 +47,13 @@ public class VeiculoServico : IVeiculoServico
 
         int itensPorPagina = 10;
 
-        return [.. query.Skip((pagina - 1) * itensPorPagina).Take(itensPorPagina)];
+        if (pagina != null)
+        { 
+            query = query.Skip(((int)pagina - 1) * itensPorPagina).Take(itensPorPagina);
+        }
+        
+
+        return query.ToList();
 
         // The commented code below is an alternative way to implement the same logic.
         // var query = _contexto.Veiculos.AsQueryable();
