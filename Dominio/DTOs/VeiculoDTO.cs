@@ -10,7 +10,7 @@ namespace MinimalApi.Dominio.DTOs
 
         public int Ano { get; set; } = default!;
 
-        public ErrosDeValidacao ValidarVeiculoDTO()
+        public ErrosDeValidacao ValidarDTO()
         {
 
             var errosDeValidacao = new ErrosDeValidacao();
@@ -21,7 +21,7 @@ namespace MinimalApi.Dominio.DTOs
             }
             else
             {
-                if (Nome.Length < 3)
+                if (Nome.Length < 2)
                 {
                     errosDeValidacao.Mensagens.Add("O nome do veículo deve ter pelo menos 3 caracteres.");
                 }
@@ -38,7 +38,7 @@ namespace MinimalApi.Dominio.DTOs
             }
             else
             {
-                if (Marca.Length < 3)
+                if (Marca.Length < 2)
                 {
                     errosDeValidacao.Mensagens.Add("A marca do veículo deve ter pelo menos 3 caracteres.");
                 }

@@ -50,7 +50,7 @@ const string VeiculosTag = "Veiculos";
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
 
-    var validacao = veiculoDTO.ValidarVeiculoDTO();
+    var validacao = veiculoDTO.ValidarDTO();
 
     if (validacao.Mensagens.Count != 0)
     {
@@ -87,7 +87,7 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico
 
 app.MapPut("/veiculos/{id}", ([FromRoute] int id, [FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
-    var validacao = veiculoDTO.ValidarVeiculoDTO();
+    var validacao = veiculoDTO.ValidarDTO();
 
     if (validacao.Mensagens.Count != 0)
     {
