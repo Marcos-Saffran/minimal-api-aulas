@@ -49,6 +49,14 @@ const string VeiculosTag = "Veiculos";
 
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
+
+    var validacao = veiculoDTO.ValidarVeiculoDTO();
+
+    if (validacao.Mensagens.Count != 0)
+    {
+        return Results.BadRequest(validacao);
+    }
+
     var veiculo = new Veiculo
     {
         Nome = veiculoDTO.Nome,
@@ -79,6 +87,13 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico
 
 app.MapPut("/veiculos/{id}", ([FromRoute] int id, [FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
+    var validacao = veiculoDTO.ValidarVeiculoDTO();
+
+    if (validacao.Mensagens.Count != 0)
+    {
+        return Results.BadRequest(validacao);
+    }
+
     var veiculo = veiculoServico.BuscarPorId(id);
 
     if (veiculo == null)
@@ -100,7 +115,7 @@ app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServ
         return Results.NotFound();
 
     veiculoServico.Apagar(veiculo);
-    
+
     return Results.NoContent();
 }).WithTags(VeiculosTag).WithDescription("Apagar veículo por ID");
 
@@ -112,7 +127,6 @@ app.UseSwaggerUI();
 
 await app.RunAsync();
 #endregion
-
 
 
 
