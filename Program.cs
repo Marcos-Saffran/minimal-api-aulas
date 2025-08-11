@@ -68,7 +68,11 @@ app.MapGet("/veiculos", (
     return Results.Ok(veiculos);
 }).WithTags("Veiculos").WithDescription("Listar todos os veículos");
 
-
+app.MapGet("/veiculos/{id:int}", (int id, IVeiculoServico veiculoServico) =>
+{
+    var veiculo = veiculoServico.BuscarPorId(id);
+    return veiculo != null ? Results.Ok(veiculo) : Results.NotFound();
+}).WithTags("Veiculos").WithDescription("Buscar veículo por ID");
 
 #endregion
 
