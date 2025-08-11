@@ -75,7 +75,6 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico
     return veiculo != null ? Results.Ok(veiculo) : Results.NotFound();
 }).WithTags("Veiculos").WithDescription("Buscar veículo por ID");
 
-// atualizar um veículo
 app.MapPut("/veiculos/{id}", ([FromRoute] int id, [FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
     var veiculo = veiculoServico.BuscarPorId(id);
