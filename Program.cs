@@ -75,6 +75,22 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico
     return veiculo != null ? Results.Ok(veiculo) : Results.NotFound();
 }).WithTags("Veiculos").WithDescription("Buscar veículo por ID");
 
+// atualizar um veículo
+app.MapPut("/veiculos/{id}", ([FromRoute] int id, [FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
+{
+    var veiculo = veiculoServico.BuscarPorId(id);
+
+    if (veiculo == null)
+        return Results.NotFound();
+
+    veiculo.Nome = veiculoDTO.Nome;
+    veiculo.Marca = veiculoDTO.Marca;
+    veiculo.Ano = veiculoDTO.Ano;
+
+    veiculoServico.Atualizar(veiculo);
+    return Results.Ok(veiculo);
+}).WithTags("Veiculos").WithDescription("Atualizar veículo por ID");
+
 #endregion
 
 #region App
