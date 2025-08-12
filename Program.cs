@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MinimalApi.Dominio.ModelViews;
 using MinimalApi.Dominio.DTOs;
 using MinimalApi.Dominio.Entidades;
+using MinimalApi.Dominio.Enums;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -57,11 +58,17 @@ app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, I
     {
         Email = administradorDTO.Email,
         Senha = administradorDTO.Senha,
-        Perfil = administradorDTO.Perfil
+        Perfil = administradorDTO.Perfil.ToString() ?? Perfil.Editor.ToString()
     };
 
     administradorServico.Incluir(administrador);
-    return Results.Created($"/administrador/{administrador.Id}", administrador);
+    var administradorModelView = new AdministradorModelView
+    {
+        Id = administrador.Id,
+        Email = administrador.Email,
+        Perfil = administrador.Perfil
+    };
+    return Results.Created($"/administrador/{administrador.Id}", administradorModelView);
 }).WithTags(AdministradoresTag).WithDescription("Criar um novo administrador");
 
 app.MapPut("/administradores/{id}", ([FromRoute] int id, [FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) =>
@@ -80,17 +87,55 @@ app.MapPut("/administradores/{id}", ([FromRoute] int id, [FromBody] Administrado
 
     administrador.Email = administradorDTO.Email;
     administrador.Senha = administradorDTO.Senha;
-    administrador.Perfil = administradorDTO.Perfil;
+    administrador.Perfil = administradorDTO.Perfil.ToString() ?? Perfil.Editor.ToString();
 
     administradorServico.Atualizar(administrador);
-    return Results.Ok(administrador);
+    var administradorModelView = new AdministradorModelView
+    {
+        Id = administrador.Id,
+        Email = administrador.Email,
+        Perfil = administrador.Perfil
+    };
+    return Results.Ok(administradorModelView);
 }).WithTags(AdministradoresTag).WithDescription("Atualizar um administrador por ID");
 
-app.MapGet("/administradores", (IAdministradorServico administradorServico) =>
+app.MapGet("/administradores", (
+    [FromQuery] int? pagina,
+    [FromQuery] string? email,
+    [FromQuery] string? perfil,
+    IAdministradorServico administradorServico) =>
 {
-    var administradores = administradorServico.Todos();
-    return Results.Ok(administradores);
+    var adms = new List<AdministradorModelView>();
+    var administradores = administradorServico.Todos(pagina, email, perfil);
+    foreach (var adm in administradores)
+    {
+        adms.Add(new AdministradorModelView
+        {
+            Id = adm.Id,
+            Email = adm.Email,
+            Perfil = adm.Perfil
+        });
+    }
+
+    return Results.Ok(adms);
 }).WithTags(AdministradoresTag).WithDescription("Listar todos os administradores");
+
+app.MapGet("/administradores/{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
+{
+    var administrador = administradorServico.BuscarPorId(id);
+
+    if (administrador == null)
+        return Results.NotFound();
+
+    var administradorModelView = new AdministradorModelView
+    {
+        Id = administrador.Id,
+        Email = administrador.Email,
+        Perfil = administrador.Perfil
+    };
+
+    return Results.Ok(administradorModelView);
+}).WithTags(AdministradoresTag).WithDescription("Buscar um administrador por ID");
 
 app.MapDelete("/administradores/{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
 {
