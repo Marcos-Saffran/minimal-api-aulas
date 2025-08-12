@@ -1,5 +1,4 @@
 using MinimalApi.Infraestrutura.Db;
-using MinimalApi.DTOs;
 using MinimalApi.Dominio.Interfaces;
 using MinimalApi.Dominio.Servicos;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +32,8 @@ app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 #endregion
 
 #region Administradores
+const string AdministradoresTag = "Administradores";
+
 app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministradorServico administradorServico) =>
 {
     var administrador = administradorServico.Login(loginDTO);
@@ -41,7 +42,67 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
         return Results.Ok("Login com sucesso!");
     else
         return Results.Unauthorized();
-}).WithTags("Administradores").WithDescription("Realizar login de administrador");
+}).WithTags(AdministradoresTag).WithDescription("Realizar login de administrador");
+
+app.MapPost("/administradores", ([FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) =>
+{
+    var validacao = administradorDTO.ValidarDTO();
+
+    if (validacao.Mensagens.Count != 0)
+    {
+        return Results.BadRequest(validacao);
+    }
+
+    var administrador = new Administrador
+    {
+        Email = administradorDTO.Email,
+        Senha = administradorDTO.Senha,
+        Perfil = administradorDTO.Perfil
+    };
+
+    administradorServico.Incluir(administrador);
+    return Results.Created($"/administrador/{administrador.Id}", administrador);
+}).WithTags(AdministradoresTag).WithDescription("Criar um novo administrador");
+
+app.MapPut("/administradores/{id}", ([FromRoute] int id, [FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) =>
+{
+    var validacao = administradorDTO.ValidarDTO();
+
+    if (validacao.Mensagens.Count != 0)
+    {
+        return Results.BadRequest(validacao);
+    }
+
+    var administrador = administradorServico.BuscarPorId(id);
+
+    if (administrador == null)
+        return Results.NotFound();
+
+    administrador.Email = administradorDTO.Email;
+    administrador.Senha = administradorDTO.Senha;
+    administrador.Perfil = administradorDTO.Perfil;
+
+    administradorServico.Atualizar(administrador);
+    return Results.Ok(administrador);
+}).WithTags(AdministradoresTag).WithDescription("Atualizar um administrador por ID");
+
+app.MapGet("/administradores", (IAdministradorServico administradorServico) =>
+{
+    var administradores = administradorServico.Todos();
+    return Results.Ok(administradores);
+}).WithTags(AdministradoresTag).WithDescription("Listar todos os administradores");
+
+app.MapDelete("/administradores/{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
+{
+    var administrador = administradorServico.BuscarPorId(id);
+
+    if (administrador == null)
+        return Results.NotFound();
+
+    administradorServico.Apagar(administrador);
+
+    return Results.NoContent();
+}).WithTags(AdministradoresTag).WithDescription("Apagar um administrador por ID");
 #endregion
 
 #region Veiculos
