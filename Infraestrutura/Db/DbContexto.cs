@@ -35,7 +35,7 @@ public class DbContexto : DbContext
         if (optionsBuilder.IsConfigured)
             return;
 
-        var stringConexao = _configuracaoAppSettings.GetConnectionString("mysql")?.ToString();
+        var stringConexao = _configuracaoAppSettings.GetConnectionString("MySql")?.ToString();
 
         if (!string.IsNullOrEmpty(stringConexao))
         {
